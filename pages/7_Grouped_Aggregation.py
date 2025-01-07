@@ -1,82 +1,93 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.pyplot as plt
 
-# Load dataset
-df = pd.read_csv("D:\\BS Data Science\\5th semester\\Introduction to Data Science\\Project\\E-commerce-Sales-Prediction-Dataset-Analysis\\Ecommerce_Sales_Prediction_Dataset.csv")
+# Load Dataset (update file path if needed)
+file_path = "Ecommerce_Sales_Prediction_Dataset.csv"
+df = pd.read_csv(file_path)
 
-st.title("Grouped Aggregations")
+# Convert 'Date' column to datetime
+df["Date"] = pd.to_datetime(df["Date"], format="%d-%m-%Y")
 
-# Ensure the 'Date' column is in datetime format
-df['Date'] = pd.to_datetime(df['Date'], format='%d-%m-%Y')
+# Page Configuration
+st.set_page_config(page_title="EDA - Sales Group Aggregation", page_icon="📊", layout="wide")
 
-# Create a new column for the month and year
-df['YearMonth'] = df['Date'].dt.to_period('M')
+# Custom Styling
+st.markdown("""
+    <style>
+        .main-title { font-size: 36px; font-weight: bold; text-align: center; color: white; background: #4CAF50; padding: 10px; border-radius: 10px; }
+        .sub-title { font-size: 24px; font-weight: bold; color: white; background: #2E86C1; padding: 5px; border-radius: 5px; }
+        .plot-container { background: white; padding: 15px; border-radius: 10px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
+    </style>
+""", unsafe_allow_html=True)
 
-# Grouping by Product Category
-st.subheader("Aggregation by Product Category")
+# Page Title
+st.markdown('<p class="main-title">📊 Group Aggregation - Sales by Category and Customer Segment</p>', unsafe_allow_html=True)
 
-product_category_agg = df.groupby('Product_Category').agg(
-    total_sales=('Units_Sold', 'sum'),
-    average_price=('Price', 'mean'),
-    total_marketing_spend=('Marketing_Spend', 'sum')
+# Introduction Text
+st.write("""
+    This page showcases the **Sales by Product Category** and **Customer Segment**. By aggregating the data, we can identify how 
+    **units sold**, **marketing spend**, and **total sales** vary across different product categories and customer segments.
+    This analysis is key to understanding the overall sales performance and customer preferences.
+""")
+
+# Group Data by Product Category and Customer Segment
+sales_by_category_segment = df.groupby(["Product_Category", "Customer_Segment"]).agg(
+    Total_Sales=("Price", "sum"), 
+    Total_Units_Sold=("Units_Sold", "sum"),
+    Total_Marketing_Spend=("Marketing_Spend", "sum")
 ).reset_index()
 
-# Displaying the aggregated data
-st.write(product_category_agg)
+# Visualizations
 
-# Visualization for Product Category Aggregation
-fig, ax = plt.subplots(1, 1, figsize=(10, 6))
-sns.barplot(data=product_category_agg, x='Product_Category', y='total_sales', ax=ax, palette="Set2")
-ax.set_title('Total Units Sold by Product Category')
-ax.set_xlabel('Product Category')
-ax.set_ylabel('Total Units Sold')
-plt.xticks(rotation=45)
+# Total Sales by Product Category and Customer Segment
+st.markdown('<p class="sub-title">📊 Total Sales by Category and Customer Segment</p>', unsafe_allow_html=True)
+
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.barplot(x="Product_Category", y="Total_Sales", hue="Customer_Segment", data=sales_by_category_segment, ax=ax)
+ax.set_title("Total Sales by Category and Customer Segment", fontsize=14)
+ax.set_xlabel("Product Category")
+ax.set_ylabel("Total Sales")
+
+# Move the legend outside the plot area
+ax.legend(title='Customer Segment', bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=10)
+
 st.pyplot(fig)
 
-# Grouping by Customer Segment
-st.subheader("Aggregation by Customer Segment")
+st.write("The bar chart above shows **total sales** for each **Product Category** segmented by **Customer Segment**. It helps us understand which categories and customer groups contribute the most to sales.")
 
-customer_segment_agg = df.groupby('Customer_Segment').agg(
-    total_sales=('Units_Sold', 'sum'),
-    average_price=('Price', 'mean'),
-    total_marketing_spend=('Marketing_Spend', 'sum')
-).reset_index()
+# Total Units Sold by Product Category and Customer Segment
+st.markdown('<p class="sub-title">📦 Total Units Sold by Category and Customer Segment</p>', unsafe_allow_html=True)
 
-# Displaying the aggregated data
-st.write(customer_segment_agg)
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.barplot(x="Product_Category", y="Total_Units_Sold", hue="Customer_Segment", data=sales_by_category_segment, ax=ax)
+ax.set_title("Total Units Sold by Category and Customer Segment", fontsize=14)
+ax.set_xlabel("Product Category")
+ax.set_ylabel("Total Units Sold")
 
-# Visualization for Customer Segment Aggregation
-fig, ax = plt.subplots(1, 1, figsize=(10, 6))
-sns.barplot(data=customer_segment_agg, x='Customer_Segment', y='total_sales', ax=ax, palette="Set1")
-ax.set_title('Total Units Sold by Customer Segment')
-ax.set_xlabel('Customer Segment')
-ax.set_ylabel('Total Units Sold')
-plt.xticks(rotation=45)
+# Move the legend outside the plot area
+ax.legend(title='Customer Segment', bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=10)
+
 st.pyplot(fig)
 
-# Grouping by Year and Month (Time Aggregation)
-st.subheader("Aggregation by Month")
+st.write("The bar chart above illustrates the **total number of units sold** for each **Product Category** and **Customer Segment**. This helps in analyzing which categories and segments are more active in terms of sales volume.")
 
-# Aggregating data by YearMonth for time-based analysis
-monthly_agg = df.groupby('YearMonth').agg(
-    total_sales=('Units_Sold', 'sum'),
-    total_marketing_spend=('Marketing_Spend', 'sum'),
-    average_price=('Price', 'mean')
-).reset_index()
+# Total Marketing Spend by Product Category and Customer Segment
+st.markdown('<p class="sub-title">💰 Total Marketing Spend by Category and Customer Segment</p>', unsafe_allow_html=True)
 
-# Convert 'YearMonth' period to datetime for plotting
-monthly_agg['YearMonth'] = monthly_agg['YearMonth'].dt.to_timestamp()
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.barplot(x="Product_Category", y="Total_Marketing_Spend", hue="Customer_Segment", data=sales_by_category_segment, ax=ax)
+ax.set_title("Total Marketing Spend by Category and Customer Segment", fontsize=14)
+ax.set_xlabel("Product Category")
+ax.set_ylabel("Total Marketing Spend")
 
-# Displaying the aggregated data
-st.write(monthly_agg)
+# Move the legend outside the plot area
+ax.legend(title='Customer Segment', bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=10)
 
-# Visualization for Time Aggregation (Monthly Trend)
-fig, ax = plt.subplots(1, 1, figsize=(10, 6))
-sns.lineplot(data=monthly_agg, x='YearMonth', y='total_sales', marker='o', color='b')
-ax.set_title('Total Units Sold by Month')
-ax.set_xlabel('Month')
-ax.set_ylabel('Total Units Sold')
-plt.xticks(rotation=45)
 st.pyplot(fig)
+
+st.write("This chart compares the **total marketing spend** for each **Product Category** and **Customer Segment**. It allows us to evaluate how much marketing budget is allocated to each category and segment.")
+
+# Footer
+st.markdown('<p style="text-align:center; color: #888; margin-top: 50px;">📌 Group aggregation helps in identifying sales patterns across categories and segments.</p>', unsafe_allow_html=True)

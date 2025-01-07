@@ -1,51 +1,48 @@
 import streamlit as st
-import pandas as pd
 
-# Load dataset (replace 'your_dataset.csv' with your actual file path)
-# For demonstration, we'll create a sample dataset.
+# Page Configuration
+st.set_page_config(page_title="E-Commerce Sales Analysis", page_icon="🛒", layout="wide")
 
-df = pd.read_csv("D:\\BS Data Science\\5th semester\\Introduction to Data Science\\Project\\E-commerce-Sales-Prediction-Dataset-Analysis\\Ecommerce_Sales_Prediction_Dataset.csv")
 
-# Title of the application
-st.title("Introduction to Data Science Project")
+# Custom Styling
+st.markdown("""
+    <style>
+        body { background-color: #f7f7f7; }
+        .big-title { font-size: 36px; font-weight: bold; text-align: center; color: white; background: #4CAF50; padding: 10px; border-radius: 10px; }
+        .main-title { font-size: 36px; font-weight: bold; text-align: center; color: white; background: #4CAF50; padding: 10px; border-radius: 10px; }
+        .sub-title { font-size: 24px; font-weight: bold; color: white; background: #2E86C1; padding: 5px; border-radius: 5px; }
+        .data-box { background: white; padding: 15px; border-radius: 10px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
+        .highlight { background-color: #f0f0f0; padding: 10px; border-radius: 5px; }
+        .footer { text-align: center; font-size: 14px; margin-top: 50px; color: #888; }
+    </style>
+""", unsafe_allow_html=True)
 
-# Subheading for the Introduction section
-st.header("Introduction")
 
-# Brief description of the dataset and project objectives
-st.write("""
-    The dataset chosen for this project contains information about sales across different product categories, customer segments, 
-    and marketing efforts. It includes the following features:
-    
-    - **Date**: Unique values representing the time of the sales.
-    - **Product_Category**: Categories of products such as Sports, Toys, Home Decor, Fashion, and Electronics.
-    - **Price** and **Discount**: Numerical columns representing product pricing and associated discounts.
-    - **Customer_Segment**: Types of customers, categorized as Occasional, Premium, or Regular.
-    - **Marketing_Spend**: Amount spent on marketing efforts.
-    - **Units_Sold**: Number of units sold.
+# Title and Introduction
+st.markdown('<p class="big-title">📊 E-Commerce Sales Analysis & Prediction 🛍️</p>', unsafe_allow_html=True)
+st.write("Welcome to the **E-Commerce Sales Analysis & Prediction App**! This interactive platform allows you to explore sales trends, "
+         "perform in-depth Exploratory Data Analysis (EDA), and predict future sales using Machine Learning models.")
+
+# Sections Overview
+st.markdown('<p class="sub-title">📌 Project Overview</p>', unsafe_allow_html=True)
+st.markdown("""
+- 🛍️ **Understand Sales Trends** across different product categories.
+- 📈 **Analyze the Impact** of discounts, marketing spend, and customer segments.
+- 🤖 **Predict Future Sales** using Machine Learning models.
+- 🔍 **Gain Insights** through interactive visualizations and data exploration.
 """)
 
-# Project objectives
-st.subheader("Project Objectives")
-st.write("""
-    The objective of this project is to:
-    - Perform comprehensive Exploratory Data Analysis (EDA).
-    - Preprocess the dataset for machine learning.
-    - Apply a suitable machine learning model to derive actionable insights.
-    - Present findings through an interactive web application using Streamlit.
+# Dataset Preview
+st.markdown('<p class="sub-title">📂 Dataset Overview</p>', unsafe_allow_html=True)
+st.markdown("""
+The dataset contains **E-commerce sales transactions**, including:
+- **Date** 📅 (Unique sales dates)
+- **Product Category** 🏷️ (Sports, Toys, Home Decor, Fashion, Electronics)
+- **Price & Discount** 💰 (Product pricing and applied discounts)
+- **Customer Segment** 🎯 (Premium, Regular, Occasional customers)
+- **Marketing Spend** 📢 (Advertising expenses)
+- **Units Sold** 📊 (Total number of items sold per transaction)
 """)
 
-# Slicer for filtering the dataset
-st.subheader("Explore the Dataset")
-selected_category = st.selectbox("Filter by Product Category", options=["All"] + df["Product_Category"].unique().tolist())
-
-selected_customer_segments = st.selectbox("Filter by Customer Segment", options=["All"] + df["Customer_Segment"].unique().tolist())
-
-filtered_df = df
-if selected_category != "All":
-    filtered_df = filtered_df[filtered_df["Product_Category"] == selected_category]
-if selected_customer_segments != "All":
-    filtered_df = filtered_df[filtered_df["Customer_Segment"] == selected_customer_segments]
-
-# Display the filtered dataset
-st.write("### Dataset Records", filtered_df)
+# Footer
+st.markdown('<p class="footer">🚀 Created by Umar Saleem | Data Science Project | 2025</p>', unsafe_allow_html=True)
